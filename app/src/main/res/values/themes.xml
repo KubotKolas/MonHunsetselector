@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.MonHunSetSelector" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <!-- Set the splash screen background color to your app's background color -->
+        <item name="windowSplashScreenBackground">@color/mhw_background_slate</item>
+
+        <!-- Use your app logo as the splash screen icon. -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_icon_drawable</item>
+
+        <!-- Set the theme of the Activity that follows your splash screen. -->
+        <item name="postSplashScreenTheme">@style/Theme.MonHunSetSelector</item>
+    </style>
+
+    <!-- Define the color resource -->
+    <color name="mhw_background_slate">#4e4837</color>
+</resources>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This layer-list drawable provides padding for the splash screen icon -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- A transparent background color. You can also use your app's background color -->
+    <item android:drawable="@android:color/transparent" />
+
+    <!--
+        Your actual logo.
+        The 'inset' values provide padding around your logo.
+        You will need to adjust these values to make your specific logo look good.
+        Increase the dp value to make the logo smaller (add more padding).
+        Decrease it to make it larger.
+    -->
+    <item
+        android:width="80dp"
+        android:height="120dp"
+        android:drawable="@drawable/mhwilds_logo_small"
+        android:gravity="center"
+        />
+    <!--
+        Alternative way using insets (might work better for some logos)
+        <item
+            android:drawable="@drawable/app_logo"
+            android:inset="24dp"
+            />
+    -->
+</layer-list>

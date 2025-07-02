@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "107942643092",
+    "project_id": "monhun-set-selector",
+    "storage_bucket": "monhun-set-selector.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:107942643092:android:cbc2165b2ef8ffb2cd7b81",
+        "android_client_info": {
+          "package_name": "com.kubot.monhunsetselector"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOcR0Yv_2skkF_Yedu9QYv7g4MjG2xFts"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
