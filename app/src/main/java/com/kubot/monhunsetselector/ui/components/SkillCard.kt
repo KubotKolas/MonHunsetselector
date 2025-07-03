@@ -23,7 +23,7 @@ fun SkillCard(
             .fillMaxWidth()
             .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(
-            // Use a slightly different color to distinguish from equipment
+
             containerColor = MaterialTheme.colorScheme.surfaceVariant
         )
     ) {
@@ -35,7 +35,7 @@ fun SkillCard(
             Text(
                 text = "Level $skillLevel",
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary // Use accent color for the level
+                color = MaterialTheme.colorScheme.primary
             )
         }
     }

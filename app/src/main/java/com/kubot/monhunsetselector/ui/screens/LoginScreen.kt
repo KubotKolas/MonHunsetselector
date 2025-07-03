@@ -2,7 +2,6 @@ package com.kubot.monhunsetselector.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,24 +23,20 @@ import com.kubot.monhunsetselector.auth.AuthManager
 
 @Composable
 fun LoginScreen(navController: NavController, aM: AuthManager) {
-    // We will need the context to launch the browser tab
     val context = LocalContext.current
     val authManager = aM
 
-    // In a real app, you'd add a check here:
-    // if (authManager.isUserLoggedIn()) {
-    //     navController.navigate(Screen.MySets.route) { popUpTo(Screen.Login.route) { inclusive = true } }
-    // }
-
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
             painter = painterResource(id = R.drawable.mhwilds_logo),
             contentDescription = "App Logo",
-            modifier = Modifier.size(240.dp) // A slightly smaller logo for this screen
+            modifier = Modifier.size(240.dp)
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -49,10 +44,9 @@ fun LoginScreen(navController: NavController, aM: AuthManager) {
         Spacer(modifier = Modifier.height(32.dp))
         Button(
             onClick = {
-                // This is where the magic starts
+
                 authManager.startSteamLogin(context)
-            }
-        ) {
+            }) {
             Text("Login with Steam")
         }
     }

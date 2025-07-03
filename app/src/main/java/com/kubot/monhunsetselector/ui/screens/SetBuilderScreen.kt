@@ -1,10 +1,7 @@
 package com.kubot.monhunsetselector.ui.screens
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,7 +14,6 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,7 +30,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -53,7 +48,7 @@ import com.kubot.monhunsetselector.ui.viewmodel.SetBuilderViewModel
 @Composable
 fun SetBuilderScreen(
     navController: NavController,
-    setId: String?, // Passed from navigation
+    setId: String?,
     onMenuClick: () -> Unit
 ) {
     val viewModel: SetBuilderViewModel = viewModel()
@@ -65,7 +60,7 @@ fun SetBuilderScreen(
     selectedSkillName?.let { skillName ->
         SkillDetailsDialog(
             skillName = skillName,
-//            viewModel = viewModel,
+
             gameDataRepository = GameDataRepository(),
             onDismissRequest = { selectedSkillName = null }
         )
@@ -73,30 +68,30 @@ fun SetBuilderScreen(
 
     val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
     LaunchedEffect(savedStateHandle) {
-        // 3. Observe the StateFlow for the key "selected_equipment".
+
         savedStateHandle?.getStateFlow<Any?>("selected_equipment", null)?.collect { equipment ->
-            // 4. Check if the returned equipment is not null.
+
             if (equipment != null) {
                 if (equipment is ArmorPiece) {
                     println("DEBUG_NAV: Equipment selected. Name: '${equipment.name}', Type: '${equipment.type}'")
                 }
-                // 5. Process the result by passing it to the ViewModel.
+
                 viewModel.onEquipmentSelected(equipment)
 
-                // 6. CRUCIAL: Clear the result from the handle. This prevents the
-                //    same equipment from being processed again if the user rotates
-                //    the screen or navigates away and back without selecting a new item.
+
+
+
                 savedStateHandle.remove<Any>("selected_equipment")
             }
         }
     }
 
-    // Load the set when the screen first launches
+
     LaunchedEffect(setId) {
         viewModel.loadSet(setId)
     }
 
-    // Listen for the save event to navigate back
+
     LaunchedEffect(viewModel.saveEvent) {
         viewModel.saveEvent.collect {
             navController.popBackStack()
@@ -139,7 +134,7 @@ fun SetBuilderScreen(
                 },
                 actions = {
                     if (setId != null) {
-                        IconButton(onClick = { showDeleteDialog = true }) { // Show dialog on click
+                        IconButton(onClick = { showDeleteDialog = true }) {
                             Icon(Icons.Default.Delete, contentDescription = "Delete Set")
                         }
                     }
@@ -148,10 +143,12 @@ fun SetBuilderScreen(
             )
         }
     ) { innerPadding ->
-        LazyColumn(modifier = Modifier
-            .padding(innerPadding)
-            .padding(16.dp)) {
-            // Set Name
+        LazyColumn(
+            modifier = Modifier
+                .padding(innerPadding)
+                .padding(16.dp)
+        ) {
+
             item()
             {
                 OutlinedTextField(
@@ -161,18 +158,18 @@ fun SetBuilderScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
             }
-//            Spacer(Modifier.height(16.dp))
+
 
             println("DEBUG_UI_STATE: Current set state is: $set")
 
-            // Equipment Slots (You'd make a reusable composable for this)
 
-//            Text("Weapon: ${set.weaponName ?: "None"}", modifier = Modifier.clickable { navController.navigate(Screen.Browse.createRoute("Weapons")) })
-//            Text("Helm: ${set.headName ?: "None"}", modifier = Modifier.clickable { navController.navigate(Screen.Browse.createRoute("Armor", "Helms")) })
-//            Text("Chest: ${set.chestName ?: "None"}", modifier = Modifier.clickable { navController.navigate(Screen.Browse.createRoute("Armor", "Chest")) })
-//            Text("Arms: ${set.armsName ?d: "None"}", modifier = Modifier.clickable { navController.navigate(Screen.Browse.createRoute("Armor", "Arms")) })
-//            Text("Legs: ${set.legsName ?: "None"}", modifier = Modifier.clickable { navController.navigate(Screen.Browse.createRoute("Armor", "Legs")) })
-//            Text("Waist: ${set.waistName ?: "None"}", modifier = Modifier.clickable { navController.navigate(Screen.Browse.createRoute("Armor", "Waist")) })
+
+
+
+
+
+
+
 
             SlotDisplayCard(
                 label = "Weapon",
@@ -181,7 +178,7 @@ fun SetBuilderScreen(
                 Text(
                     text = set.weaponName ?: "Tap to select",
                     style = MaterialTheme.typography.bodyLarge,
-                    // Use a more prominent color if an item is selected
+
                     color = if (set.weaponName != null) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -240,91 +237,46 @@ fun SetBuilderScreen(
                 )
             }
 
-//            Spacer(Modifier.height(16.dp))
-//            Divider()
+
+
 
             CumulativeStatsSection(
                 stats = stats,
                 onSkillClick = { skillName -> selectedSkillName = skillName }
             )
 
-            // Cumulative Stats Placeholder
-//            Text("Cumulative Stats", style = MaterialTheme.typography.titleMedium)
-//            Text("Attack Boost: Placeholder")
-//            Text("Defense Up: Placeholder")
+
         }
     }
 }
 
-//@Composable
-//fun CumulativeStatsSection(
-//    stats: CumulativeStats,
-//    onSkillClick: (String) -> Unit
-//) {
-//    LazyColumn {
-//        item { Text("Cumulative Stats", style = MaterialTheme.typography.titleMedium) }
-//        items(stats.numericStats.entries.toList()) { (name, value) ->
-//            Text("$name: $value")
-//        }
-//
-//        item { Text("Skills", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(top = 16.dp)) }
-//        items(stats.skills.entries.toList()) { (name, level) ->
-//            Text(
-//                text = "$name Lv. $level",
-//                modifier = Modifier.clickable { onSkillClick(name) }
-//            )
-//        }
-//
-//        item { Text("Materials", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(top = 16.dp)) }
-//        items(stats.materials.entries.toList()) { (name, quantity) ->
-//            Text("$name x$quantity")
-//        }
-//
-//        if (stats.slots.isNotEmpty()) {
-//            item {
-//                Text(
-//                    "Decoration Slots",
-//                    style = MaterialTheme.typography.titleMedium,
-//                    modifier = Modifier.padding(top = 16.dp)
-//                )
-//            }
-//            // Simply iterate through the list of slot strings and display them
-//            items(stats.slots) { slotString ->
-//                Text(slotString)
-//            }
-//        }
-//    }
-//}
 
-// --- THIS IS THE NEW EXTENSION FUNCTION ---
-// Notice it's no longer a @Composable function, but an extension on LazyListScope
 fun LazyListScope.CumulativeStatsSection(
     stats: CumulativeStats,
     onSkillClick: (String) -> Unit
 ) {
-    // We are already inside a LazyColumn, so we can call item() and items() directly.
 
-    // --- Section 1: Cumulative Stats ---
+
     item {
         Text(
             "Cumulative Stats",
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp) // Add some top padding
+                .padding(top = 16.dp)
         )
         Spacer(modifier = Modifier.height(8.dp))
     }
     if (stats.numericStats.isNotEmpty()) {
         items(stats.numericStats.entries.toList()) { (name, value) ->
-            // Use StatRow for better alignment
+
             StatRow(statName = name, statValue = value.toString())
         }
     } else {
         item { Text("No stats to display.", color = MaterialTheme.colorScheme.onSurfaceVariant) }
     }
 
-    // --- Section 2: Skills ---
+
     item {
         Text(
             "Skills",
@@ -344,10 +296,15 @@ fun LazyListScope.CumulativeStatsSection(
             }
         }
     } else {
-        item { Text("No skills from equipped items.", color = MaterialTheme.colorScheme.onSurfaceVariant) }
+        item {
+            Text(
+                "No skills from equipped items.",
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
 
-    // --- Section 3: Decoration Slots ---
+
     if (stats.slots.isNotEmpty()) {
         item {
             Text(
@@ -358,12 +315,14 @@ fun LazyListScope.CumulativeStatsSection(
             Spacer(modifier = Modifier.height(8.dp))
         }
         items(stats.slots) { slotString ->
-            // You could wrap this in a Card or Row for better styling
-            Text(slotString, modifier = Modifier.padding(start = 8.dp).padding(bottom = 8.dp))
+
+            Text(slotString, modifier = Modifier
+                .padding(start = 8.dp)
+                .padding(bottom = 8.dp))
         }
     }
 
-    // --- Section 4: Materials ---
+
     if (stats.materials.isNotEmpty()) {
         item {
             Text(

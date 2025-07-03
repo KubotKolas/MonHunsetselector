@@ -19,20 +19,20 @@ import androidx.compose.ui.unit.dp
 fun LazyListScope.SlotDisplayCard(
     label: String,
     onClick: () -> Unit,
-    content: @Composable () -> Unit // The content to display inside (e.g., your Text)
+    content: @Composable () -> Unit
 ) {
-    // A Column to hold the label and the card together
-    item ()
+
+    item()
     {
         Column(modifier = Modifier.padding(vertical = 8.dp)) {
-            // The small label above the card (e.g., "Weapon", "Head")
+
             Text(
                 text = label,
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
             )
-            // The main card that provides the background and click effect
+
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
@@ -40,7 +40,7 @@ fun LazyListScope.SlotDisplayCard(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant
                 )
             ) {
-                // This Box handles the click ripple and crops it to the card's shape
+
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -49,9 +49,9 @@ fun LazyListScope.SlotDisplayCard(
                         .padding(
                             horizontal = 16.dp,
                             vertical = 20.dp
-                        ) // Generous padding for a good tap area
+                        )
                 ) {
-                    // The content (your Text composable) is placed inside the Box
+
                     content()
                 }
             }

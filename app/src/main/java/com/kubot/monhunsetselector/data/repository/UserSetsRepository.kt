@@ -22,7 +22,7 @@ object UserSetsRepository {
      * @param forceRefresh If true, it will ignore the cache and fetch from Firestore.
      */
     suspend fun getMySets(forceRefresh: Boolean = false): List<UserSet> {
-        // If we are not forcing a refresh and the cache is not null, return the cache!
+
         if (!forceRefresh && cachedSets != null) {
             println("SETS_CACHE: Returning cached sets.")
             return cachedSets!!
@@ -37,7 +37,7 @@ object UserSetsRepository {
                 .await()
 
             val newSets = snapshot.toObjects(UserSet::class.java)
-            // Store the newly fetched list in our cache
+
             cachedSets = newSets
             newSets
         } catch (e: Exception) {
@@ -55,21 +55,21 @@ object UserSetsRepository {
         println("SETS_CACHE: Cache invalidated.")
     }
 
-    // Save or update a set. This handles the "queued" saving you wanted.
+
     suspend fun saveSet(set: UserSet) {
         val collection = setsCollection() ?: return
         if (set.id.isBlank()) {
-            // Creating a new set
+
             collection.add(set).await()
         } else {
-            // Updating an existing set
+
             collection.document(set.id).set(set).await()
         }
-        // Invalidate the cache after a successful write
+
         invalidateCache()
     }
 
-    // Get a single set by its ID to edit it
+
     suspend fun getSetById(setId: String): UserSet? {
         val document = setsCollection()?.document(setId)?.get()?.await()
         return document?.toObject(UserSet::class.java)?.apply { id = document.id }
@@ -77,7 +77,7 @@ object UserSetsRepository {
 
     suspend fun deleteSet(setId: String) {
         setsCollection()?.document(setId)?.delete()?.await()
-        // Invalidate the cache after a successful write
+
         invalidateCache()
     }
 }

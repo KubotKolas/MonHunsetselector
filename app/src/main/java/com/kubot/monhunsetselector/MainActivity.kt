@@ -6,14 +6,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.kubot.monhunsetselector.auth.AuthManager
@@ -34,13 +29,13 @@ class MainActivity : ComponentActivity() {
 
         lifecycleScope.launch {
             authManager.authState.collect { authState ->
-                // As soon as the state is no longer UNKNOWN, we can dismiss the splash.
+
                 if (authState != AuthState.UNKNOWN) {
                     keepSplashOnScreen = false
                 }
             }
         }
-        // Handle the incoming deep link URL
+
         val uri = intent?.data
         if (uri != null) {
             lifecycleScope.launch {
@@ -53,7 +48,10 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MonHunSetSelectorTheme {
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
                     AppNavigation(authManager)
                 }
             }

@@ -13,7 +13,7 @@ class GameDataRepository {
 
     private val db = Firebase.firestore
 
-    // Maps the user-friendly dropdown names to the actual Firestore collection names
+
     private val weaponCollectionMap = mapOf(
         "Great Sword" to "GS",
         "Long Sword" to "LS",
@@ -35,19 +35,19 @@ class GameDataRepository {
         val bundle = Bundle()
         for ((key, value) in map) {
             if (value == null) {
-                // If the value is null, you can either skip it or add it as an empty string.
-                // Adding an empty string is often safer for the UI layer.
+
+
                 bundle.putString(key, "")
-                continue // Go to the next item in the loop
+                continue
             }
             when (value) {
                 is String -> bundle.putString(key, value)
-                is Long -> bundle.putLong(key, value) // Firestore often uses Long for integers
+                is Long -> bundle.putLong(key, value)
                 is Int -> bundle.putInt(key, value)
                 is Double -> bundle.putDouble(key, value)
                 is Boolean -> bundle.putBoolean(key, value)
-                // Add other types as needed
-                else -> bundle.putString(key, value.toString()) // Fallback to String
+
+                else -> bundle.putString(key, value.toString())
             }
         }
         return bundle
@@ -62,7 +62,7 @@ class GameDataRepository {
                 else -> emptyList()
             }
         } catch (e: Exception) {
-            // Log the error and return an empty list so the app doesn't crash
+
             println("Error fetching equipment: $e")
             emptyList()
         }
@@ -71,22 +71,21 @@ class GameDataRepository {
     private suspend fun fetchArmor(armorType: String): List<ArmorPiece> {
         val collectionName = armorType.uppercase()
 
-//        println("Attempting to fetch armor from collection: '$collectionName'")
 
         val snapshot = db.collection(collectionName).get().await()
 
-//        println("Query for '$collectionName' returned ${snapshot.size()} documents.")
+
 
         return snapshot.documents.mapNotNull { document ->
             document.data?.let { data ->
                 val armorName = data["Name"] as? String ?: "Unknown"
                 val mappedType = mapStringToArmorType(armorType)
-                if (armorName == "G Doshaguma Helm Alpha") { // Pick a specific armor piece to check
+                if (armorName == "G Doshaguma Helm Alpha") {
                     println("DEBUG_REPO: Creating ArmorPiece: name='$armorName', type='$mappedType'")
                 }
                 ArmorPiece(
                     id = document.id,
-                    name = data["Name"] as? String ?: "Unknown", // IMPORTANT: Match capitalization
+                    name = data["Name"] as? String ?: "Unknown",
                     type = mapStringToArmorType(armorType),
                     allStats = mapToBundle(data)
                 )
@@ -103,7 +102,7 @@ class GameDataRepository {
                 Weapon(
                     id = document.id,
                     name = data["Name"] as? String ?: "Unknown",
-                    type = weaponType, // Use the user-friendly name
+                    type = weaponType,
                     allStats = mapToBundle(data)
                 )
             }
@@ -111,7 +110,7 @@ class GameDataRepository {
     }
 
     private suspend fun fetchSkills(): List<Skill> {
-        val snapshot = db.collection("SKILLS").get().await() // Direct collection name
+        val snapshot = db.collection("SKILLS").get().await()
         return snapshot.documents.mapNotNull { document ->
             document.data?.let { data ->
                 Skill(
@@ -124,7 +123,7 @@ class GameDataRepository {
         }
     }
 
-    // Helper to convert the dropdown string to the ArmorType enum
+
     private fun mapStringToArmorType(type: String): ArmorType {
         return when (type) {
             "Helms" -> ArmorType.HELMS
@@ -132,23 +131,22 @@ class GameDataRepository {
             "Arms" -> ArmorType.ARMS
             "Waist" -> ArmorType.WAIST
             "Legs" -> ArmorType.LEGS
-            else -> ArmorType.HELMS // A sensible default
+            else -> ArmorType.HELMS
         }
     }
 
-    // --- NEW METHODS ---
 
     /**
      * Fetches a single weapon document by its ID from the correct collection.
      */
     suspend fun getWeaponById(weaponId: String, weaponType: String?): Weapon? {
-        // Find the correct Firestore collection name from the weapon's type
+
         val collectionName = weaponCollectionMap[weaponType] ?: return null
 
         return try {
             val document = db.collection(collectionName).document(weaponId).get().await()
             document.toObject(Weapon::class.java)?.apply {
-                // Manually set the type and map stats, since toObject doesn't handle Maps well
+
                 this.type = weaponType ?: ""
                 this.allStats = mapToBundle(document.data ?: emptyMap())
             }
@@ -162,13 +160,13 @@ class GameDataRepository {
      * Fetches a single armor document by its ID from the correct collection.
      */
     suspend fun getArmorById(armorId: String, armorType: ArmorType): ArmorPiece? {
-        // Get the collection name from the enum's name (e.g., HELMS, CHEST)
+
         val collectionName = armorType.name
 
         return try {
             val document = db.collection(collectionName).document(armorId).get().await()
             document.toObject(ArmorPiece::class.java)?.apply {
-                // Manually set the type and map stats
+
                 this.type = armorType
                 this.allStats = mapToBundle(document.data ?: emptyMap())
             }
@@ -184,7 +182,7 @@ class GameDataRepository {
     suspend fun getSkillByName(skillName: String): Skill? {
         try {
             val snapshot = db.collection("SKILLS")
-                .whereEqualTo("Name", skillName) // Query for the document with the matching name
+                .whereEqualTo("Name", skillName)
                 .limit(1)
                 .get()
                 .await()
@@ -195,18 +193,18 @@ class GameDataRepository {
             val skill = document.toObject(Skill::class.java) ?: return null
             val fullDataMap = document.data
             if (fullDataMap != null) {
-                // Step 3: Create a mutable copy and remove keys that are already mapped
+
                 val remainingDataMap = fullDataMap.toMutableMap()
                 remainingDataMap.remove("Name")
                 remainingDataMap.remove("Description")
-                // Add any other @PropertyName-mapped fields here if you add more later
 
-                // Step 4: Convert the REST of the data into the 'details' bundle
+
+
                 skill.details = mapToBundle(remainingDataMap)
             }
-//            document.toObject(Skill::class.java)?.apply {
-//                this.details = mapToBundle(document.data ?: emptyMap())
-//            }
+
+
+
             return skill
         } catch (e: Exception) {
             println("Error fetching skill by name '$skillName': $e")
